@@ -28,6 +28,9 @@
   let speedIncreaseRate = 8; // px/s per second
   let score = 0;
 
+  // obstacle configuration
+  const useVolcanoOnly = true; // set to true to make all obstacles volcanoes
+
   let running = true;
 
   // sprite animation state (for JS-driven frames)
@@ -39,12 +42,26 @@
 
   function createObstacle() {
     const gameSize = getGameSize();
-    const w = 20 + Math.random() * 40;
-    const h = 20 + Math.random() * 60;
+    const useVolcano = useVolcanoOnly ? true : (Math.random() < 0.28); // ~28% chance to spawn a volcano unless forced
+    let w, h;
     const el = document.createElement('div');
-    el.className = 'obstacle';
-    el.style.width = w + 'px';
-    el.style.height = h + 'px';
+    if (useVolcano) {
+      el.className = 'obstacle volcano';
+      // random volcano sizes so some are easy to jump over and some are taller
+      const minH = 36;
+      const maxH = 96;
+      h = Math.floor(minH + Math.random() * (maxH - minH));
+      // make width proportional to height
+      w = Math.floor(h * (0.9 + Math.random() * 0.4));
+      el.style.width = w + 'px';
+      el.style.height = h + 'px';
+    } else {
+      w = 20 + Math.random() * 40;
+      h = 20 + Math.random() * 60;
+      el.className = 'obstacle';
+      el.style.width = w + 'px';
+      el.style.height = h + 'px';
+    }
     el.style.left = (gameSize.w + 20) + 'px';
     game.appendChild(el);
     obstacles.push({el, x: gameSize.w + 20, w, h});
@@ -87,9 +104,27 @@
       o.x -= speed * dt;
       o.el.style.left = o.x + 'px';
 
-      // collision
-      const marioBox = {x: mario.x, y: mario.y + GROUND, w: mario.w, h: mario.h};
-      const obBox = {x: o.x, y: GROUND, w: o.w, h: o.h};
+      // collision (use smaller hitboxes to avoid unfair premature hits)
+      const marioHitInsetX = 12;
+      const marioHitInsetY = 8;
+      const marioBox = {
+        x: mario.x + marioHitInsetX,
+        y: mario.y + GROUND + marioHitInsetY,
+        w: Math.max(8, mario.w - marioHitInsetX * 2),
+        h: Math.max(8, mario.h - marioHitInsetY * 2)
+      };
+
+      // obstacle hitbox shrink (volcano gets a tighter box)
+      const isVolcano = o.el.classList && o.el.classList.contains && o.el.classList.contains('volcano');
+      const obInsetX = isVolcano ? 10 : 6;
+      const obInsetY = isVolcano ? 6 : 4;
+      const obBox = {
+        x: o.x + obInsetX,
+        y: GROUND + obInsetY,
+        w: Math.max(6, o.w - obInsetX * 2),
+        h: Math.max(6, o.h - obInsetY * 2)
+      };
+
       if (rectsOverlap(marioBox, obBox)) {
         gameOver();
         return;

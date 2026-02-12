@@ -38,6 +38,9 @@ html,body{height:100%;margin:0;font-family:Arial,Helvetica,sans-serif;background
 @keyframes runleg{0%{transform:translateY(0)}50%{transform:translateY(6px)}100%{transform:translateY(0)}}
 .obstacle{position:absolute;bottom:22px;width:28px;background:var(--ob);border-radius:4px}
 
+/* volcano obstacle sprite */
+.obstacle.volcano{background-color:transparent;background-image:url('volcano.svg');background-repeat:no-repeat;background-position:center bottom;background-size:contain;border-radius:4px}
+
 /* tail and spots */
 .mario .tail{position:absolute;left:-18px;bottom:6px;width:26px;height:14px;background:linear-gradient(#4fd86b,#2fa84a);border-radius:40% 60% 60% 40%;transform:rotate(-22deg);z-index:0;box-shadow:inset -3px -3px rgba(0,0,0,0.06)}
 .mario .spot{position:absolute;background:rgba(0,0,0,0.06);border-radius:50%}
