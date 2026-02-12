@@ -149,6 +149,17 @@
     jumpBtn.addEventListener('click', (e) => { jump(); });
   }
 
+  // overlay / restart handlers (allow tapping overlay or button to restart on mobile)
+  const restartBtn = document.getElementById('restartBtn');
+  if (restartBtn) {
+    restartBtn.addEventListener('pointerdown', (e) => { restart(); });
+    restartBtn.addEventListener('click', (e) => { restart(); });
+  }
+
+  // tapping the overlay anywhere restarts the game when game is over
+  overlay.addEventListener('pointerdown', (e) => { if (!running) restart(); });
+  overlay.addEventListener('click', (e) => { if (!running) restart(); });
+
   // handle window resize (optional adjustments)
   window.addEventListener('resize', () => { tick.last = null; });
 
