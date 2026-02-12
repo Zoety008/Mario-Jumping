@@ -2,7 +2,7 @@
 *{box-sizing:border-box}
 html,body{height:100%;margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg)}
 .hud{position:fixed;top:calc(env(safe-area-inset-top) + 10px);left:10px;right:10px;display:flex;justify-content:space-between;pointer-events:none;padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right);gap:8px;z-index:10001}
-#score,#speedLabel{background:rgba(255,255,255,0.95);padding:8px 12px;border-radius:6px;font-weight:600;z-index:10002;box-shadow:0 4px 10px rgba(0,0,0,0.08)}
+#score,#speedLabel,#highScore{background:rgba(255,255,255,0.95);padding:8px 12px;border-radius:6px;font-weight:600;z-index:10002;box-shadow:0 4px 10px rgba(0,0,0,0.08)}
 .game{width:100%;max-width:900px;height:360px;margin:72px auto 20px;position:relative;background:linear-gradient(#c6f0ff,#8ed0ff);overflow:hidden;border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,0.15);touch-action:none}
 .ground{position:absolute;left:0;right:0;bottom:0;height:22px;background:var(--ground)}
 .mario{position:absolute;left:80px;bottom:22px;width:72px;height:72px;background:linear-gradient(180deg,#4fd86b,#2fa84a);border-radius:46% 54% 40% 40%;box-shadow:inset -8px -8px rgba(0,0,0,0.08);display:block}
@@ -66,6 +66,13 @@ html,body{height:100%;margin:0;font-family:Arial,Helvetica,sans-serif;background
 @media (max-width:700px){
 	.restart-btn{font-size:18px;padding:14px 18px}
 }
+
+/* High scores list in overlay */
+.highscores{margin-top:10px;text-align:left}
+.highscores ol{padding-left:20px;margin:6px 0}
+.highscores li{padding:6px 8px;border-radius:6px;background:linear-gradient(180deg,#fff,#f6f6f6);margin-bottom:6px;font-weight:700}
+.highscores li.new{background:linear-gradient(180deg,#fff7e6,#fff3d1);color:#b75b00}
+.highscores .caption{font-weight:600;margin-bottom:6px}
 
 /* speed label movement - duration will be adjusted by script */
 #speedLabel{animation: labelmove 2s linear infinite}

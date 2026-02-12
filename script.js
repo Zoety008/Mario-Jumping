@@ -5,6 +5,7 @@
   const speedLabel = document.getElementById('speedLabel');
   const overlay = document.getElementById('overlay');
   const finalScore = document.getElementById('finalScore');
+  const highScoreEl = document.getElementById('highScore');
 
   // dynamic game size (recomputed on resize / each frame)
   function getGameSize(){
@@ -28,10 +29,66 @@
   let speedIncreaseRate = 8; // px/s per second
   let score = 0;
 
+  // high scores list (persist in localStorage)
+  const HS_KEY = 'mj_highscore_v1'; // legacy single-value key (migration)
+  const HS_LIST_KEY = 'mj_highscores_v1';
+  let highs = [];
+  try {
+    const raw = localStorage.getItem(HS_LIST_KEY);
+    if (raw) highs = JSON.parse(raw) || [];
+    else {
+      // migrate legacy single-value high score if present
+      const old = parseInt(localStorage.getItem(HS_KEY));
+      if (!isNaN(old) && old > 0) highs = [{score: old, name: ''}];
+    }
+  } catch(e){ highs = []; }
+
+  // normalize highs to objects {score, name}
+  highs = highs.map(h => {
+    if (h && typeof h === 'object') return { score: Number(h.score)||0, name: String(h.name||'') };
+    return { score: Number(h)||0, name: '' };
+  });
+
+  function saveHighs(){ try { localStorage.setItem(HS_LIST_KEY, JSON.stringify(highs)); } catch(e){} }
+
+  function updateHighScoreDisplay(){
+    const topEntry = highs.length ? highs[0] : null;
+    if (!topEntry) {
+      highScoreEl.textContent = 'High: 0';
+    } else {
+      const name = topEntry.name ? topEntry.name : '—';
+      highScoreEl.textContent = 'High: ' + Math.floor(topEntry.score) + ' (' + name + ')';
+    }
+  }
+  updateHighScoreDisplay();
+
+  function renderHighScoresList(newScore){
+    const container = document.getElementById('highScoresList');
+    if (!container) return;
+    container.innerHTML = '';
+    const caption = document.createElement('div');
+    caption.className = 'caption';
+    caption.textContent = 'Top Scores';
+    container.appendChild(caption);
+    const ol = document.createElement('ol');
+    for (let i = 0; i < highs.length; i++){
+      const entry = highs[i];
+      const li = document.createElement('li');
+      const displayName = entry.name ? entry.name : '---';
+      li.textContent = Math.floor(entry.score) + '   ' + displayName;
+      if (newScore !== undefined && Math.floor(newScore) === Math.floor(entry.score) && entry.name === ''){
+        li.classList.add('new');
+      }
+      ol.appendChild(li);
+    }
+    container.appendChild(ol);
+  }
+
   // obstacle configuration
   const useVolcanoOnly = true; // set to true to make all obstacles volcanoes
 
   let running = true;
+  let lastScore = 0;
 
   // sprite animation state (for JS-driven frames)
   const SPRITE_COUNT = 4;
@@ -105,8 +162,9 @@
       o.el.style.left = o.x + 'px';
 
       // collision (use smaller hitboxes to avoid unfair premature hits)
-      const marioHitInsetX = 12;
-      const marioHitInsetY = 8;
+      // tightened Mario hitbox insets (larger inset -> smaller hitbox)
+      const marioHitInsetX = 18;
+      const marioHitInsetY = 12;
       const marioBox = {
         x: mario.x + marioHitInsetX,
         y: mario.y + GROUND + marioHitInsetY,
@@ -116,8 +174,9 @@
 
       // obstacle hitbox shrink (volcano gets a tighter box)
       const isVolcano = o.el.classList && o.el.classList.contains && o.el.classList.contains('volcano');
-      const obInsetX = isVolcano ? 10 : 6;
-      const obInsetY = isVolcano ? 6 : 4;
+      // tightened obstacle hitboxes (volcano smaller hitbox)
+      const obInsetX = isVolcano ? 18 : 10;
+      const obInsetY = isVolcano ? 12 : 8;
       const obBox = {
         x: o.x + obInsetX,
         y: GROUND + obInsetY,
@@ -188,6 +247,67 @@
     running = false;
     overlay.classList.remove('hidden');
     finalScore.textContent = 'Your score: ' + Math.floor(score);
+    // update highs list and show it
+    const s = Math.floor(score);
+    lastScore = s;
+    // add entry object, then sort by score desc
+    highs.push({score: s, name: ''});
+    highs.sort((a,b)=>b.score - a.score);
+    highs = highs.slice(0,5);
+    saveHighs();
+    updateHighScoreDisplay();
+    renderHighScoresList(s);
+
+    // if the new score made the list and has no name, prompt for a name
+    const newIndex = highs.findIndex(e => e.score === s && e.name === '');
+    if (newIndex !== -1) {
+      // create name input UI
+      const container = overlay.querySelector('.overlay-content');
+      if (container) {
+        const form = document.createElement('div');
+        form.id = 'nameEntry';
+        form.style.marginTop = '10px';
+        const label = document.createElement('div');
+        label.textContent = 'Enter name for your score:';
+        label.style.fontWeight = '700';
+        label.style.marginBottom = '6px';
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.maxLength = 16;
+        input.placeholder = 'Your name';
+        input.style.padding = '8px';
+        input.style.borderRadius = '6px';
+        input.style.border = '1px solid #ccc';
+        input.style.marginRight = '8px';
+        const saveBtn = document.createElement('button');
+        saveBtn.textContent = 'Save';
+        saveBtn.style.padding = '8px 12px';
+        saveBtn.style.borderRadius = '6px';
+        saveBtn.style.background = '#2b7a78';
+        saveBtn.style.color = '#fff';
+        saveBtn.style.border = 'none';
+        saveBtn.style.fontWeight = '700';
+        const doSave = ()=>{
+          const name = input.value.trim() || 'Player';
+          highs[newIndex].name = name;
+          saveHighs();
+          updateHighScoreDisplay();
+          renderHighScoresList();
+          // remove form
+          const f = document.getElementById('nameEntry'); if (f) f.remove();
+        };
+        saveBtn.addEventListener('click', doSave);
+        // allow Enter to save
+        input.addEventListener('keydown', (ev)=>{
+          if (ev.key === 'Enter') { ev.preventDefault(); doSave(); }
+        });
+        form.appendChild(label);
+        form.appendChild(input);
+        form.appendChild(saveBtn);
+        container.appendChild(form);
+        input.focus();
+      }
+    }
   }
 
   function restart(){
@@ -198,6 +318,24 @@
     mario.y = 0; mario.vy = 0; marioEl.style.bottom = (GROUND + mario.y) + 'px';
     tick.last = null;
     requestAnimationFrame(tick);
+    // if name entry present but not yet saved, persist it now
+    const nameForm = document.getElementById('nameEntry');
+    if (nameForm) {
+      const input = nameForm.querySelector('input');
+      if (input) {
+        const val = input.value.trim();
+        if (val) {
+          // find matching score entry with empty name (use lastScore fallback)
+          const idx = highs.findIndex(e => e.score === lastScore && (!e.name || e.name === ''));
+          if (idx !== -1) {
+            highs[idx].name = val || 'Player';
+            saveHighs();
+            updateHighScoreDisplay();
+          }
+        }
+      }
+      nameForm.remove();
+    }
   }
 
   // controls
