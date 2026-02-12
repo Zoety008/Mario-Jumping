@@ -5,31 +5,55 @@ html,body{height:100%;margin:0;font-family:Arial,Helvetica,sans-serif;background
 #score,#speedLabel{background:rgba(255,255,255,0.95);padding:8px 12px;border-radius:6px;font-weight:600;z-index:10002;box-shadow:0 4px 10px rgba(0,0,0,0.08)}
 .game{width:100%;max-width:900px;height:360px;margin:72px auto 20px;position:relative;background:linear-gradient(#c6f0ff,#8ed0ff);overflow:hidden;border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,0.15);touch-action:none}
 .ground{position:absolute;left:0;right:0;bottom:0;height:22px;background:var(--ground)}
-.mario{position:absolute;left:80px;bottom:22px;width:56px;height:52px;background:var(--mario);border-radius:48% 52% 40% 40%;box-shadow:inset -6px -6px rgba(0,0,0,0.06);display:block}
-.mario::before{content:'';position:absolute;left:8px;bottom:6px;width:40px;height:30px;background:#fff;border-radius:40%/50%;}
-.mario::after{content:'';position:absolute;right:-8px;top:18px;width:18px;height:18px;background:var(--mario);border-radius:50%;box-shadow:inset -3px -3px rgba(0,0,0,0.06)}
-.mario .eye{position:absolute;width:12px;height:16px;background:#fff;border-radius:8px;top:6px}
-.mario .eye::after{content:'';position:absolute;width:6px;height:6px;background:#000;border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%)}
-.mario .eye.left{left:18px;transform:rotate(-8deg)}
-.mario .eye.right{left:30px;transform:rotate(6deg)}
-.mario .saddle{position:absolute;left:4px;top:20px;width:36px;height:18px;background:#d1393e;border-radius:8px;z-index:-1;transform:translateX(-6px)}
+.mario{position:absolute;left:80px;bottom:22px;width:72px;height:72px;background:linear-gradient(180deg,#4fd86b,#2fa84a);border-radius:46% 54% 40% 40%;box-shadow:inset -8px -8px rgba(0,0,0,0.08);display:block}
+.mario::before{content:'';position:absolute;left:10px;bottom:10px;width:48px;height:36px;background:#fff;border-radius:42%/50%;box-shadow:inset -6px -6px rgba(0,0,0,0.04)}
+.mario::after{content:'';position:absolute;right:-6px;top:26px;width:22px;height:22px;background:linear-gradient(#4fd86b,#2fa84a);border-radius:50%;box-shadow:inset -3px -3px rgba(0,0,0,0.06)}
+.mario .eye{position:absolute;width:18px;height:22px;background:#fff;border-radius:10px;top:10px;box-shadow:0 2px 0 rgba(0,0,0,0.05)}
+.mario .eye::after{content:'';position:absolute;width:8px;height:8px;background:#000;border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%)}
+.mario .eye.left{left:18px;transform:rotate(-6deg)}
+.mario .eye.right{left:34px;transform:rotate(6deg)}
+.mario .cheek{position:absolute;right:6px;top:26px;width:20px;height:18px;background:rgba(255,255,255,0.18);border-radius:50%}
+.mario .saddle{position:absolute;left:6px;top:30px;width:40px;height:20px;background:#d1393e;border-radius:8px;z-index:1;transform:translateX(-6px)}
+
+/* snout and teeth */
+.mario .snout{position:absolute;right:-6px;top:28px;width:36px;height:28px;background:linear-gradient(180deg,#57df75,#2fa84a);border-radius:40% 40% 30% 30%;transform:skewX(-6deg);z-index:2}
+.mario .tooth{position:absolute;width:8px;height:8px;background:#fff;border-radius:2px;bottom:4px}
+.mario .tooth.left{left:6px;transform:rotate(-10deg)}
+.mario .tooth.right{left:16px;transform:rotate(6deg)}
 
 /* arms */
-.mario .arm{position:absolute;width:14px;height:26px;background:var(--mario);border-radius:10px;top:22px;z-index:3;box-shadow:inset -2px -2px rgba(0,0,0,0.06)}
+.mario .arm{position:absolute;width:14px;height:26px;background:linear-gradient(#47d36a,#2fa84a);border-radius:10px;top:36px;z-index:3;box-shadow:inset -2px -2px rgba(0,0,0,0.06)}
 .mario .arm.left{left:-6px;transform:rotate(-28deg);transform-origin:top right}
 .mario .arm.right{right:-6px;transform:rotate(28deg);transform-origin:top left}
 .mario .arm::after{content:'';position:absolute;right:0;bottom:0;width:8px;height:8px;background:#fff;border-radius:50%}
 
 /* legs */
-.mario .leg{position:absolute;width:16px;height:20px;background:#2ea44f;border-radius:8px;bottom:-6px;z-index:1;box-shadow:inset -2px -2px rgba(0,0,0,0.08)}
-.mario .leg.left{left:12px}
-.mario .leg.right{left:32px}
+.mario .leg{position:absolute;width:18px;height:22px;background:#2ea44f;border-radius:8px;bottom:-8px;z-index:1;box-shadow:inset -2px -2px rgba(0,0,0,0.08)}
+.mario .leg.left{left:16px}
+.mario .leg.right{left:40px}
 
 /* slight running animation */
 .mario.running .leg.left{animation: runleg 0.45s linear infinite}
 .mario.running .leg.right{animation: runleg 0.45s linear infinite 0.22s}
 @keyframes runleg{0%{transform:translateY(0)}50%{transform:translateY(6px)}100%{transform:translateY(0)}}
 .obstacle{position:absolute;bottom:22px;width:28px;background:var(--ob);border-radius:4px}
+
+/* tail and spots */
+.mario .tail{position:absolute;left:-18px;bottom:6px;width:26px;height:14px;background:linear-gradient(#4fd86b,#2fa84a);border-radius:40% 60% 60% 40%;transform:rotate(-22deg);z-index:0;box-shadow:inset -3px -3px rgba(0,0,0,0.06)}
+.mario .spot{position:absolute;background:rgba(0,0,0,0.06);border-radius:50%}
+.mario .spot.s1{left:20px;top:8px;width:12px;height:8px}
+.mario .spot.s2{left:34px;top:6px;width:10px;height:6px}
+
+/* Sprite sheet mode: use the external SVG sprite instead of inner DOM shapes */
+.mario.sprite{background-color:transparent;background-image:url('sprites.svg');background-repeat:no-repeat;background-size:400% 100%;background-position:0 0;box-shadow:none !important;filter:none !important}
+/* hide inner decorative elements and pseudo-elements when using sprite */
+.mario.sprite > *{display:none !important}
+.mario.sprite *{display:none !important}
+.mario.sprite::before,.mario.sprite::after{display:none !important;content:none !important}
+.mario.sprite.running{animation: sprite-run 0.5s steps(3) infinite}
+/* Ensure jump frame is displayed exactly (no animation) and cannot be overridden */
+.mario.sprite.jump{animation: none !important; background-position: 300% 0 !important; background-size:400% 100% !important; background-repeat:no-repeat !important; opacity:1 !important}
+@keyframes sprite-run{ from { background-position: 0 0 } to { background-position: 300% 0 } }
 .overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);z-index:9999}
 .overlay.hidden{display:none}
 .overlay-content{background:white;padding:22px;border-radius:10px;text-align:center;min-width:260px;max-width:92%;z-index:10000}

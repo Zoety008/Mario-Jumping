@@ -12,7 +12,7 @@
   }
 
   // Mario physics
-  let mario = {x:80, y:0, w:48, h:48, vy:0}; // y = above ground
+  let mario = {x:80, y:0, w:72, h:72, vy:0}; // y = above ground (match CSS size)
   const GROUND = 22;
   const JUMP_V = 700; // px/s
   const GRAV = -2200; // px/s^2
@@ -29,6 +29,13 @@
   let score = 0;
 
   let running = true;
+
+  // sprite animation state (for JS-driven frames)
+  const SPRITE_COUNT = 4;
+  const SPRITE_W = 72; // px per frame in sprites.svg
+  const SPRITE_H = 72;
+  let spriteTimer = 0;
+  const SPRITE_FRAME_DUR = 0.12; // seconds per frame when running
 
   function createObstacle() {
     const gameSize = getGameSize();
@@ -98,8 +105,36 @@
     score += dt * (speed/100);
     scoreEl.textContent = 'Score: ' + Math.floor(score);
 
-    // running animation toggle
-    if (mario.y === 0) marioEl.classList.add('running'); else marioEl.classList.remove('running');
+    // running / jumping animation toggle (works with sprite and DOM shapes)
+    const isSprite = marioEl.classList.contains('sprite');
+    if (isSprite) {
+      // JS-driven sprite frames: running cycles frames 0..2, jump shows frame 3
+      if (mario.y === 0) {
+        spriteTimer += dt;
+        const frame = Math.floor(spriteTimer / SPRITE_FRAME_DUR) % (SPRITE_COUNT - 1); // cycle 0..2
+        const px = -frame * SPRITE_W;
+        marioEl.style.backgroundSize = (SPRITE_W * SPRITE_COUNT) + 'px ' + SPRITE_H + 'px';
+        marioEl.style.backgroundPosition = px + 'px 0px';
+      } else {
+        // in-air: show last frame (jump)
+        spriteTimer = 0;
+        const px = - (SPRITE_COUNT - 1) * SPRITE_W;
+        marioEl.style.animation = 'none';
+        marioEl.style.backgroundSize = (SPRITE_W * SPRITE_COUNT) + 'px ' + SPRITE_H + 'px';
+        marioEl.style.backgroundPosition = px + 'px 0px';
+      }
+      // keep class for non-sprite styles
+      if (mario.y === 0) marioEl.classList.add('running'); else marioEl.classList.remove('running');
+    } else {
+      // non-sprite DOM-based shapes (keep previous behavior)
+      if (mario.y === 0) {
+        marioEl.classList.add('running');
+        marioEl.classList.remove('jump');
+      } else {
+        marioEl.classList.remove('running');
+        marioEl.classList.add('jump');
+      }
+    }
 
     requestAnimationFrame(tick);
   }
