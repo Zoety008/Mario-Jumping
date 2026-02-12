@@ -1,0 +1,50 @@
+:root{--bg:#8ed0ff;--ground:#6aa84f;--mario:#34c759;--ob:#333}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg)}
+.hud{position:fixed;top:10px;left:10px;right:10px;display:flex;justify-content:space-between;pointer-events:none}
+#score,#speedLabel{background:rgba(255,255,255,0.85);padding:8px 12px;border-radius:6px;font-weight:600}
+.game{width:100%;max-width:900px;height:360px;margin:72px auto 20px;position:relative;background:linear-gradient(#c6f0ff,#8ed0ff);overflow:hidden;border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,0.15);touch-action:none}
+.ground{position:absolute;left:0;right:0;bottom:0;height:22px;background:var(--ground)}
+.mario{position:absolute;left:80px;bottom:22px;width:56px;height:52px;background:var(--mario);border-radius:48% 52% 40% 40%;box-shadow:inset -6px -6px rgba(0,0,0,0.06);display:block}
+.mario::before{content:'';position:absolute;left:8px;bottom:6px;width:40px;height:30px;background:#fff;border-radius:40%/50%;}
+.mario::after{content:'';position:absolute;right:-8px;top:18px;width:18px;height:18px;background:var(--mario);border-radius:50%;box-shadow:inset -3px -3px rgba(0,0,0,0.06)}
+.mario .eye{position:absolute;width:12px;height:16px;background:#fff;border-radius:8px;top:6px}
+.mario .eye::after{content:'';position:absolute;width:6px;height:6px;background:#000;border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%)}
+.mario .eye.left{left:18px;transform:rotate(-8deg)}
+.mario .eye.right{left:30px;transform:rotate(6deg)}
+.mario .saddle{position:absolute;left:4px;top:20px;width:36px;height:18px;background:#d1393e;border-radius:8px;z-index:-1;transform:translateX(-6px)}
+
+/* arms */
+.mario .arm{position:absolute;width:14px;height:26px;background:var(--mario);border-radius:10px;top:22px;z-index:3;box-shadow:inset -2px -2px rgba(0,0,0,0.06)}
+.mario .arm.left{left:-6px;transform:rotate(-28deg);transform-origin:top right}
+.mario .arm.right{right:-6px;transform:rotate(28deg);transform-origin:top left}
+.mario .arm::after{content:'';position:absolute;right:0;bottom:0;width:8px;height:8px;background:#fff;border-radius:50%}
+
+/* legs */
+.mario .leg{position:absolute;width:16px;height:20px;background:#2ea44f;border-radius:8px;bottom:-6px;z-index:1;box-shadow:inset -2px -2px rgba(0,0,0,0.08)}
+.mario .leg.left{left:12px}
+.mario .leg.right{left:32px}
+
+/* slight running animation */
+.mario.running .leg.left{animation: runleg 0.45s linear infinite}
+.mario.running .leg.right{animation: runleg 0.45s linear infinite 0.22s}
+@keyframes runleg{0%{transform:translateY(0)}50%{transform:translateY(6px)}100%{transform:translateY(0)}}
+.obstacle{position:absolute;bottom:22px;width:28px;background:var(--ob);border-radius:4px}
+.overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.5)}
+.overlay.hidden{display:none}
+.overlay-content{background:white;padding:28px;border-radius:8px;text-align:center;min-width:260px}
+
+/* speed label movement - duration will be adjusted by script */
+#speedLabel{animation: labelmove 2s linear infinite}
+@keyframes labelmove{0%{transform:translateX(0)}50%{transform:translateX(8px)}100%{transform:translateX(0)}}
+
+@media (max-width:940px){.game{width:calc(100% - 40px)}}
+
+/* Mobile-specific HUD and controls */
+#score,#speedLabel{font-size:14px}
+.jump-btn{position:fixed;right:18px;bottom:22px;padding:16px 18px;border-radius:999px;background:rgba(0,0,0,0.6);color:#fff;border:0;font-weight:700;z-index:60;display:none;box-shadow:0 6px 18px rgba(0,0,0,0.25)}
+@media (max-width:700px){
+	.game{height:44vh;margin:28px auto}
+	#score,#speedLabel{font-size:16px;padding:10px 14px}
+	.jump-btn{display:block;right:16px;bottom:16px;padding:18px 20px;font-size:18px}
+}

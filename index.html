@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Mario Jump</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="hud">
+      <div id="score">Score: 0</div>
+      <div id="speedLabel">Speed</div>
+    </div>
+
+    <div class="game" id="game" role="application" aria-label="Mario jumping game">
+      <div class="ground"></div>
+      <div class="mario" id="mario">
+        <span class="eye left"></span>
+        <span class="eye right"></span>
+        <span class="saddle"></span>
+        <span class="arm left"></span>
+        <span class="arm right"></span>
+        <span class="leg left"></span>
+        <span class="leg right"></span>
+      </div>
+    </div>
+
+    <button id="jumpBtn" class="jump-btn" aria-label="Jump">Jump</button>
+
+    <div id="overlay" class="overlay hidden">
+      <div class="overlay-content">
+        <h1>Game Over</h1>
+        <p id="finalScore"></p>
+        <p>Press <strong>R</strong> to restart</p>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+  </html>
